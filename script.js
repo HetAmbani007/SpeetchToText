@@ -27,6 +27,7 @@ let isEditing = false;
 let hasStopped = false;
 let recognitionError = false;
 let usedCompatibilityRetry = false;
+let microphoneReady = false;
 
 function showMessage(text) { message.textContent = text; message.classList.remove("hidden"); }
 function hideMessage() { message.classList.add("hidden"); }
@@ -105,8 +106,28 @@ function setupRecognition() {
   };
   return true;
 }
-function startRecording() {
+async function requestMicrophoneAccess() {
+  if (microphoneReady) return true;
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showMessage("This browser does not support microphone access. Open Vaani in Safari or Chrome over HTTPS.");
+    return false;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach(track => track.stop());
+    microphoneReady = true;
+    permissionNotice.classList.add("hidden");
+    return true;
+  } catch (error) {
+    permissionNotice.classList.remove("hidden");
+    showMessage("Microphone access was blocked. Tap Allow in the browser prompt. If you already denied it, enable Microphone for this site in your device settings, then try again.");
+    return false;
+  }
+}
+
+async function startRecording() {
   hideMessage();
+  if (!(await requestMicrophoneAccess())) return;
   if (!recognition && !setupRecognition()) return;
   if (hasStopped) {
     finalTranscript = "";
@@ -192,7 +213,5 @@ translateButton.addEventListener("click", async () => {
     showMessage("Translation is temporarily unavailable. Check your connection and try again.");
   } finally { translateButton.disabled = false; translateButton.textContent = "Translate ✦"; }
 });
-document.querySelector("#permissionButton").addEventListener("click", async () => {
-  try { const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); stream.getTracks().forEach(track => track.stop()); permissionNotice.classList.add("hidden"); } catch (error) { showMessage("Microphone permission was not granted. Please allow it in your browser settings."); }
-});
+document.querySelector("#permissionButton").addEventListener("click", () => { void requestMicrophoneAccess(); });
 if (!SpeechRecognition) showMessage("Speech recognition is not supported in this browser. Try Chrome or Safari.");
