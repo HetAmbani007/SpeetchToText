@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#172342">
+  <title>Vaani · Speech to text</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="#" aria-label="Vaani home"><span class="brand-mark">◉</span> Vaani<span class="accent">.</span></a>
+      <div class="browser-note"><span class="online-dot"></span> Works in your browser</div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow light">Speech to text, made simple</p>
+        <h1>Your voice.<br><span>Your words.</span></h1>
+        <p class="hero-description">Speak naturally and watch your words appear. No typing, no limits, just your thoughts.</p>
+      </div>
+      <div class="hero-orb" aria-hidden="true"><span>♬</span></div>
+    </section>
+
+    <div id="permissionNotice" class="notice hidden" role="status">
+      <div>
+        <strong>Microphone access is needed</strong>
+        <p>Allow microphone access in your browser so Vaani can listen to your voice.</p>
+      </div>
+      <button id="permissionButton" class="button primary small">Allow microphone</button>
+    </div>
+
+    <section class="card recorder-card">
+      <div class="section-heading">
+        <div><p class="eyebrow">01 / Record</p><h2>Capture your thoughts</h2></div>
+        <label class="language-select">◎ <select id="sourceLanguage" aria-label="Recording language">
+          <option value="en-IN">English</option><option value="hi-IN">Hindi</option>
+          <option value="gu-IN">Gujarati</option><option value="sa-IN">Sanskrit</option>
+        </select></label>
+      </div>
+      <div id="recordStage" class="record-stage">
+        <div class="record-icon">♩</div>
+        <div class="stage-copy"><strong id="stageTitle">Ready when you are</strong><span id="stageHint">Tap the button to start speaking</span></div>
+        <div id="waves" class="waves hidden" aria-label="Recording activity"><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div class="controls">
+        <button id="startButton" class="button primary">● <span>Start recording</span></button>
+        <button id="pauseButton" class="button secondary hidden">Ⅱ <span>Pause</span></button>
+        <button id="stopButton" class="button stop hidden">■ <span>Stop</span></button>
+        <button id="resumeButton" class="button primary hidden">▶ <span>Resume</span></button>
+        <span class="control-hint">You can pause and continue anytime</span>
+      </div>
+      <p id="message" class="message hidden" role="alert"></p>
+    </section>
+
+    <section id="transcriptSection" class="card transcript-card hidden">
+      <div class="section-heading">
+        <div><p class="eyebrow">02 / Your transcript</p><h2>Words captured</h2></div>
+        <span class="saved-pill">Saved in this session</span>
+      </div>
+      <div class="transcript-box">
+        <textarea id="transcriptEditor" aria-label="Transcript" placeholder="Your transcript will appear here after you speak."></textarea>
+        <div class="tool-row">
+          <button id="editButton" class="tool-button">✎ <span>Edit</span></button>
+          <button id="copyButton" class="tool-button">▣ <span>Copy text</span></button>
+          <button id="downloadButton" class="tool-button">↓ <span>Download</span></button>
+        </div>
+      </div>
+
+      <div class="translate-panel">
+        <div class="translate-heading"><span class="sparkle">✦</span><div><strong>Translate your text</strong><small>Choose a language to translate your transcript</small></div></div>
+        <div class="translate-controls">
+          <select id="targetLanguage" aria-label="Translation language">
+            <option value="en">English</option><option value="hi">Hindi</option><option value="gu">Gujarati</option><option value="sa">Sanskrit</option>
+          </select>
+          <button id="translateButton" class="button translate">Translate ✦</button>
+        </div>
+        <div id="translationResult" class="translation-result hidden">
+          <p id="translatedText"></p>
+          <div class="tool-row"><button id="copyTranslation" class="tool-button">▣ Copy</button><button id="downloadTranslation" class="tool-button">↓ Download</button></div>
+        </div>
+      </div>
+    </section>
+    <footer><span>Vaani · Voice to text for everyone</span><span>Your transcript stays in this session</span></footer>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
