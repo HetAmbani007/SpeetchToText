@@ -1,5 +1,4 @@
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-const sourceLanguage = document.querySelector("#sourceLanguage");
 const startButton = document.querySelector("#startButton");
 const pauseButton = document.querySelector("#pauseButton");
 const resumeButton = document.querySelector("#resumeButton");
@@ -26,7 +25,6 @@ let isPaused = false;
 let isEditing = false;
 let hasStopped = false;
 let recognitionError = false;
-let usedCompatibilityRetry = false;
 let microphoneReady = false;
 
 function showMessage(text) { message.textContent = text; message.classList.remove("hidden"); }
@@ -51,7 +49,6 @@ function setupRecognition() {
   // Short sessions are more reliable than one long-lived session in Chrome.
   recognition.continuous = false;
   recognition.interimResults = true;
-  recognition.lang = sourceLanguage.value;
   recognition.onstart = () => {
     recognitionError = false;
     recordStage.classList.add("active");
@@ -71,17 +68,6 @@ function setupRecognition() {
   };
   recognition.onerror = event => {
     if (event.error === "aborted") return;
-    if (event.error === "network" && !usedCompatibilityRetry) {
-      usedCompatibilityRetry = true;
-      recognitionError = true;
-      recognition.lang = "en-US";
-      hideMessage();
-      window.setTimeout(() => {
-        recognitionError = false;
-        try { recognition.start(); } catch (error) { showSpeechServiceMessage(); }
-      }, 250);
-      return;
-    }
     recognitionError = true;
     isPaused = true;
     setButtonState("idle");
@@ -138,8 +124,6 @@ async function startRecording() {
   isPaused = false;
   hasStopped = false;
   recognitionError = false;
-  usedCompatibilityRetry = false;
-  recognition.lang = sourceLanguage.value;
   try { recognition.start(); setButtonState("recording"); } catch (error) { showMessage("Unable to start the microphone. Please try again."); }
 }
 function showSpeechServiceMessage() {
@@ -188,7 +172,6 @@ startButton.addEventListener("click", startRecording);
 resumeButton.addEventListener("click", startRecording);
 pauseButton.addEventListener("click", pauseRecording);
 stopButton.addEventListener("click", stopRecording);
-sourceLanguage.addEventListener("change", () => { if (recognition && !stopButton.classList.contains("hidden")) recognition.lang = sourceLanguage.value; });
 editButton.addEventListener("click", () => {
   isEditing = !isEditing; transcriptEditor.classList.toggle("editing", isEditing);
   editButton.innerHTML = isEditing ? "✓ <span>Save edits</span>" : "✎ <span>Edit</span>";
@@ -203,7 +186,7 @@ translateButton.addEventListener("click", async () => {
   if (!text) { showMessage("Record or write some text before translating."); return; }
   translateButton.disabled = true; translateButton.textContent = "Translating...";
   try {
-    const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLanguage.value.slice(0, 2)}|${targetLanguage.value}`);
+    const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=autodetect|${targetLanguage.value}`);
     if (!response.ok) throw new Error("translation request failed");
     const data = await response.json();
     if (!data.responseData || !data.responseData.translatedText) throw new Error("empty translation");
