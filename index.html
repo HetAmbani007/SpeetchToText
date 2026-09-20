@@ -39,6 +39,21 @@
         <div><p class="eyebrow">01 / Record</p><h2>Capture your thoughts</h2></div>
         <span class="auto-language">◎ Browser language detection</span>
       </div>
+      <div class="api-key-row">
+        <label class="api-key-label">
+          <span>Sarvam API key</span>
+          <input id="apiKeyInput" type="password" placeholder="Enter your Sarvam API key" autocomplete="off">
+        </label>
+        <label class="language-select compact">
+          <span>Record language</span>
+          <select id="recordLanguage">
+            <option value="unknown">Auto-detect</option>
+            <option value="hi-IN">Hindi</option>
+            <option value="gu-IN">Gujarati</option>
+            <option value="en-IN">English</option>
+          </select>
+        </label>
+      </div>
       <div id="recordStage" class="record-stage">
         <div class="record-icon">♩</div>
         <div class="stage-copy"><strong id="stageTitle">Ready when you are</strong><span id="stageHint">Tap the button to start speaking</span></div>
