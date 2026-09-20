@@ -19,6 +19,7 @@ const translatedText = document.querySelector("#translatedText");
 const permissionNotice = document.querySelector("#permissionNotice");
 const apiKeyInput = document.querySelector("#apiKeyInput");
 const recordLanguage = document.querySelector("#recordLanguage");
+const DEFAULT_API_KEY = "sk_l44nuzku_a6p1dXBLKNBF84TS5Hh7fNLP";
 
 let mediaRecorder = null;
 let mediaStream = null;
@@ -31,8 +32,11 @@ let microphoneReady = false;
 
 function showMessage(text) { message.textContent = text; message.classList.remove("hidden"); }
 function hideMessage() { message.classList.add("hidden"); }
-function getApiKey() { return (apiKeyInput.value || "").trim(); }
-function getLanguageCode() { return (recordLanguage.value || "unknown").trim(); }
+function getApiKey() {
+  const configuredKey = (apiKeyInput && apiKeyInput.value ? apiKeyInput.value : DEFAULT_API_KEY).trim();
+  return configuredKey || DEFAULT_API_KEY;
+}
+function getLanguageCode() { return (recordLanguage && recordLanguage.value ? recordLanguage.value : "unknown").trim(); }
 function setButtonState(state) {
   startButton.classList.toggle("hidden", state !== "idle" && state !== "stopped");
   pauseButton.classList.toggle("hidden", state !== "recording");
@@ -135,7 +139,7 @@ async function blobToWav(blob) {
 async function transcribeAudio(blob) {
   const apiKey = getApiKey();
   if (!apiKey) {
-    throw new Error("Add your Sarvam API key to transcribe the recording.");
+    throw new Error("The app key is missing. Please configure the Sarvam key before recording.");
   }
 
   const wavBlob = await blobToWav(blob);
@@ -167,7 +171,7 @@ async function startRecording() {
   hideMessage();
   if (!(await requestMicrophoneAccess())) return;
   if (!getApiKey()) {
-    showMessage("Add your Sarvam API key before recording.");
+    showMessage("Sarvam API key is missing. Please add the configured app key.");
     return;
   }
   if (typeof MediaRecorder === "undefined") {
